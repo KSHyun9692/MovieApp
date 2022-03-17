@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaCode } from "react-icons/fa";
 import { API_KEY, API_URL, IMG_BASE_URL } from '../../Config';
-import MainImage from './Sections/MainImage';
+import MainImage from './Section/MainImage';
 
 function LandingPage() {
 
@@ -26,9 +26,13 @@ function LandingPage() {
     return (
         <div style={{ width:'100%', margin: '0'}}>
 
-            {/* Main Image */}
+            {/*  Main Image  */}
             {MainMovieImage &&
-            <MainImage image={`${IMG_BASE_URL}w1280${MainMovieImage.backdrop_path}`} />
+                <MainImage 
+                image={`${IMG_BASE_URL}w1280${MainMovieImage.backdrop_path}`}
+                title={MainMovieImage.original_title}
+                text={MainMovieImage.overview}
+                />
             }
             <div style={{ width:'85%', margin: '1rem auto'}}>
             
