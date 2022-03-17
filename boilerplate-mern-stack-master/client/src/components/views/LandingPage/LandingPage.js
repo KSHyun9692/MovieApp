@@ -2,24 +2,36 @@ import React, { useEffect, useState } from 'react'
 import { FaCode } from "react-icons/fa";
 import { API_KEY, API_URL, IMG_BASE_URL } from '../../Config';
 import MainImage from './Section/MainImage';
+import GridCards from '../commons/GridCards';
+import { Row } from 'antd';
 
 function LandingPage() {
 
     const [Movies, setMovies] = useState([]);
     const [MainMovieImage, setMainMovieImage] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
         const endPoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
-        fetch(endPoint)
-        .then(response => response.json())
-        .then(response => {
-
-            setMovies([response.results]);
-            setMainMovieImage(response.results[0]);
-        })
         
-    
+        fetchMovies(endPoint)
     }, []);
+
+    const fetchMovies = (endPoint) => {
+        fetch(endPoint)
+            .then(response => response.json())
+            .then(response => {
+            setMovies([...Movies, ...response.results])
+            setMainMovieImage(response.results[0])
+            setCurrentPage(response.page)
+        })
+    }
+
+    const loadMoreItems = () => {
+        const endPoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${currentPage + 1}`;
+        
+        fetchMovies(endPoint)
+    }
 
 
 
@@ -40,10 +52,25 @@ function LandingPage() {
                 <hr />
 
                 {/* Movie Grid Cards */}
+            
+                <Row gutter={[16, 16]}>
+                    {Movies && Movies.map((movie, index) => (
+                        <React.Fragment key={index}>
+                            <GridCards
+                                imgae={movie.poster_path ?
+                                    `${IMG_BASE_URL}w500${movie.poster_path}` : null
+                                }
+                                movieId={movie.id}
+                                movieName={movie.original_title}
+                            />
+                        </React.Fragment>
+                        
+                    ))}
+                </Row>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center'}}>
-                <button>Load More</button>
+                <button onClick={loadMoreItems}>Load More</button>
             </div>
 
         </div>
